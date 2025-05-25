@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Barbearia Domini Henry",
-    "slug": "Barbearia Domini Henry",
+    "name": "BarbeariaDominiHenry",
+    "slug": "BarbeariaDominiHenry",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
