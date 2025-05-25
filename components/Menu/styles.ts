@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     padding: 16,
     borderBottomWidth: 0,
-    borderBottomColor: theme.colors.darkGray,
+    borderBottomColor: theme.colors.darkBlack,
   },
 
   content: {

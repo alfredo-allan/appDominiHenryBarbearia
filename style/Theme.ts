@@ -1,12 +1,14 @@
 const theme = {
   colors: {
     gray: "#bdbdbd",
-    darkGray: "#232323",
+    darkBlack: "#000000",
     white: "#ffffff",
   },
   fonts: {
     main: "Roboto, sans-serif",
   },
 };
+
+
 
 export default theme;

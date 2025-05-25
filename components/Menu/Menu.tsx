@@ -6,10 +6,10 @@ import {
   ScrollView,
 } from "react-native";
 import { styles } from "./styles"; // Estilos separados
-import Servicos from "../Servicos/Servicos"; // Componente Serviços
-import Avaliacao from "../Avaliacao/Avaliacao";
+import Services from "../Services /Services"; // Componente Serviços
+import Avaliacao from "../Assessment/Assessment";
 import Portfolio from "../Portfolio/Portfolio";
-import Detalhes from "../Detalhes/Detalhes";
+import Details from "../Details/Details";
 import Schedule from "../Schedule/Schedule";
 import { Schedulestyles } from "./ScheculeContainerStyles";
 
@@ -52,10 +52,10 @@ const Menu = () => {
           activeMenu === "Agendamentos" ? Schedulestyles.scheduleContainer : null,
         ]}
       >
-        {activeMenu === "Serviços" && <Servicos />}
+        {activeMenu === "Serviços" && <Services />}
         {activeMenu === "Avaliação" && <Avaliacao />}
         {activeMenu === "Portfolio" && <Portfolio />}
-        {activeMenu === "Detalhes" && <Detalhes />}
+        {activeMenu === "Detalhes" && <Details />}
         {activeMenu === "Agendamentos" && <Schedule />}
       </View>
     </View>

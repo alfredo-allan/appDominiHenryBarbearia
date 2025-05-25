@@ -27,7 +27,7 @@ const AnimatedIcon = () => {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require("../../assets/images/kinkbarbearia-removebg-preview.png")}
+        source={require("../../assets/images/splash.png")}
         style={[styles.icon, { transform: [{ scale }] }]}
       />
     </View>

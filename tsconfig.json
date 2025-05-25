@@ -4,7 +4,14 @@
     "strict": true,
     "target": "ES2017",
     "jsx": "react",
-    "lib": ["es2017", "dom"],
-    "moduleResolution": "node"
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "moduleResolution": "node16",
+    "module": "Node16",
+    "customConditions": [
+      "react-native"
+    ]
   }
 }

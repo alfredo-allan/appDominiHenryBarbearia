@@ -6,13 +6,13 @@ export const styles = StyleSheet.create({
   container: {
     padding: 16,
     borderBottomWidth: 0,
-    borderBottomColor: theme.colors.darkGray,
+    borderBottomColor: theme.colors.darkBlack,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
   },
   socialContainer: {
     flexDirection: "row",
@@ -27,6 +27,6 @@ export const styles = StyleSheet.create({
   address: {
     fontSize: 14,
     fontWeight: 500,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
   },
 });

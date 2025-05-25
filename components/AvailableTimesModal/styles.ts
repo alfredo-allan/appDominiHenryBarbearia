@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     maxHeight: "60%", // Limita a altura do modal
   },
   modalTitle: {
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
   },
   cancelButton: {
     padding: 10,

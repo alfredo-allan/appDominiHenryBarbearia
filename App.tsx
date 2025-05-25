@@ -1,43 +1,28 @@
-import React, { useState, useCallback, useEffect } from "react";
+// App.tsx
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Modal, Text, TouchableOpacity, Image } from "react-native";
-import { useFonts, Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
 import * as SplashScreen from "expo-splash-screen";
+import { useFonts, Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
+
 import theme from "./style/Theme";
+
 import Header from "./components/Header/Header";
 import InfoBarber from "./components/InfoBarber/InfoBarber";
 import Menu from "./components/Menu/Menu";
 import Login from "./screens/Login/Login";
 import Register from "./screens/Register/Register";
-import { AuthProvider, useAuth } from "./src/context/AuthContext"; // Importando AuthProvider
 
-const App: React.FC = () => {
-  const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
-  });
+import { AuthProvider, useAuth } from "./src/Context/AuthContext";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
-  const [modalVisible, setModalVisible] = useState(true); // Controla o modal inicial
-  const [authStep, setAuthStep] = useState<"home" | "login" | "register">("home"); // Controla o estado de autenticação
-  const { isAuthenticated, logout } = useAuth(); // Pegando o estado de autenticação
+const AuthFlow = () => {
+  const { user } = useAuth();
+  const [authStep, setAuthStep] = useState<"home" | "login" | "register">("home");
+  const [modalVisible, setModalVisible] = useState(true);
 
-  useEffect(() => {
-    SplashScreen.preventAutoHideAsync(); // Evita que a splash screen feche automaticamente
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync(); // Fecha a splash screen assim que as fontes estiverem carregadas
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null; // Retorna uma tela vazia enquanto as fontes carregam
-  }
-
-  // Se o usuário já estiver autenticado, redireciona para a tela principal
-  if (isAuthenticated) {
+  if (user) {
     return (
-      <View style={styles.container} onLayout={onLayoutRootView}>
+      <View style={styles.container}>
         <Header />
         <InfoBarber />
         <Menu />
@@ -45,13 +30,11 @@ const App: React.FC = () => {
     );
   }
 
-  // Renderiza a tela de login ou cadastro, se necessário
   if (authStep === "login") return <Login setAuthStep={setAuthStep} />;
   if (authStep === "register") return <Register setAuthStep={setAuthStep} />;
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      {/* Modal Inicial */}
+    <View style={styles.container}>
       <Modal
         animationType="slide"
         transparent
@@ -60,26 +43,27 @@ const App: React.FC = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Image
-              source={require("./assets/images/kinkbarbearia-removebg-preview.png")}
-              style={styles.logo}
-            />
-            <Text style={styles.title}>Agendamentos King Barbearia</Text>
+            <Image source={require("./assets/images/splash.png")} style={styles.logo} />
+            <Text style={styles.titleApp}>Agendamentos</Text>
+            <Text style={styles.titleBarber}>Barbearia Domini Henry</Text>
+
             <Text style={styles.subtitle}>Já é Nosso Cliente?</Text>
+
             <TouchableOpacity
               style={styles.customButtonLogin}
               onPress={() => {
                 setAuthStep("login");
-                setModalVisible(false); // Fecha o modal quando o login é selecionado
+                setModalVisible(false);
               }}
             >
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.customButtonRegister}
               onPress={() => {
                 setAuthStep("register");
-                setModalVisible(false); // Fecha o modal quando o cadastro é selecionado
+                setModalVisible(false);
               }}
             >
               <Text style={styles.buttonText}>Cadastro</Text>
@@ -90,6 +74,39 @@ const App: React.FC = () => {
     </View>
   );
 };
+
+const AppContent = () => {
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_700Bold,
+  });
+
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
+
+  return (
+    <View style={styles.container} onLayout={onLayoutRootView}>
+      <AuthFlow />
+    </View>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -103,26 +120,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: theme.colors.darkGray,
+    backgroundColor: theme.colors.darkBlack,
     padding: 50,
     borderRadius: 10,
     width: "80%",
-    height: "30%",
+    height: "40%",
     alignItems: "center",
-    borderWidth: 1, // Define a largura da borda
-    borderColor: theme.colors.gray, // Define a cor da borda
-  },
-  title: {
-    fontSize: 25,
-    fontWeight: "bold",
-    marginBottom: 10,
-    left: "20%",
-    marginTop: -40,
-    color: theme.colors.gray,
+    borderWidth: 1,
+    borderColor: theme.colors.gray,
   },
   subtitle: {
-    top: "20%",
-    fontSize: 18,
+    marginTop: 0,
+    fontSize: 15,
     color: theme.colors.gray,
     marginBottom: 10,
   },
@@ -133,38 +142,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: "center",
-    right: "80%",
+    left: 20,
+    bottom: 20,
     width: 110,
-    marginTop: 150,
   },
   customButtonRegister: {
+    position: "absolute",
     backgroundColor: theme.colors.gray,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: "center",
-    left: "30%",
+    right: 20,
+    bottom: 20,
     width: 110,
-    marginTop: 32,
   },
   buttonText: {
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontSize: 15,
     fontWeight: "bold",
   },
   logo: {
-    position: "absolute",
-    width: 80,
-    height: 80,
-    left: "5%",
-    top: "4%",
+    marginTop: -50,
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
+  titleApp: {
+    fontSize: 20,
+    color: theme.colors.gray,
+    fontWeight: "bold",
+    top: -35,
+  },
+  titleBarber: {
+    fontSize: 15,
+    color: theme.colors.gray,
+    top: -35,
+  }
 });
-
-export default function WrappedApp() {
-  return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  );
-}

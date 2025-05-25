@@ -4,3 +4,4 @@ export type RootStackParamList = {
   Register: undefined; // Tela de Registro não recebe parâmetros
   Main: undefined; // Tela principal
 };
+

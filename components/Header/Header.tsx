@@ -9,7 +9,7 @@ const Header = () => {
       style={styles.headerBackground}
     >
       <Image
-        source={require("../../assets/images/kinkbarbearia-removebg-preview.png")}
+        source={require("../../assets/images/splash.png")}
         style={styles.logo}
       />
     </ImageBackground>

@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: theme.colors.darkGray,
+    backgroundColor: theme.colors.darkBlack,
   },
   title: {
     fontSize: 24,
@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     color: theme.colors.gray,
-    backgroundColor: theme.colors.darkGray, // Para dar contraste
+    backgroundColor: theme.colors.darkBlack, // Para dar contraste
   },
   footerText: {
     marginTop: 20,
@@ -36,20 +36,25 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center", // Para centralizar o texto verticalmente
-    width: 110,
+    width: 150,
     height: 40,
     marginTop: 10,
+    marginRight: "auto",
+    marginLeft: "auto",
   },
   buttonText: {
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontSize: 15,
     fontWeight: "bold",
+    marginRight: "auto",
+    marginLeft: "auto",
+
   },
   logo: {
     position: "absolute",
-    width: 80,
-    height: 80,
-    top: "10%",
+    width: 150,
+    height: 150,
+    top: "5%",
     alignSelf: "center", // Substitui o `left` para centralizar automaticamente
   },
   inner: {
@@ -62,5 +67,26 @@ export const styles = StyleSheet.create({
     color: theme.colors.gray, // Cor azul, você pode ajustar conforme necessário
     textDecorationLine: "underline", // Para adicionar o estilo de link
     fontWeight: "bold",
-  }
+  },
+  eyeIcon: {
+  },
+
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+  },
+
+  inputPassword: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: "#333",
+  },
+
 });
+

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// Para uma maior segurança, considere usar react-native-keychain
+// Para maior segurança, pode usar react-native-keychain
 // import * as Keychain from 'react-native-keychain';
 
 // Tipagem para o usuário
@@ -8,7 +8,7 @@ interface User {
     id: string;
     name: string;
     email: string;
-    // outros campos do usuário...
+    // outros campos que quiser...
 }
 
 interface AuthContextProps {
@@ -18,15 +18,15 @@ interface AuthContextProps {
     logout: () => Promise<void>;
 }
 
-// Inicializa o contexto
+// Cria o contexto com valor inicial undefined
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-// Componente de provedor de autenticação
+// Provedor do contexto que envolve o app
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User | null>(null);
 
-    // Carrega o estado de autenticação e dados do usuário ao iniciar o app
+    // Carrega os dados do usuário e estado de autenticação do AsyncStorage ao iniciar
     useEffect(() => {
         const loadAuthState = async () => {
             try {
@@ -43,14 +43,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loadAuthState();
     }, []);
 
-    // Função para realizar login
+    // Função para login: salva usuário no state e AsyncStorage
     const login = async (userData: User) => {
         try {
             setUser(userData);
             setIsAuthenticated(true);
             await AsyncStorage.setItem("@Auth:user", JSON.stringify(userData));
-
-            // Para uma maior segurança, você poderia usar o Keychain:
+            // Para maior segurança, pode usar Keychain:
             // await Keychain.setGenericPassword(userData.email, userData.password);
         } catch (error) {
             console.error("Erro ao salvar dados do usuário:", error);
@@ -58,14 +57,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    // Função para realizar logout
+    // Função para logout: limpa usuário e AsyncStorage
     const logout = async () => {
         try {
             setUser(null);
             setIsAuthenticated(false);
             await AsyncStorage.removeItem("@Auth:user");
-
-            // Para maior segurança, considere limpar o Keychain também:
+            // Se usar Keychain:
             // await Keychain.resetGenericPassword();
         } catch (error) {
             console.error("Erro ao remover dados do usuário:", error);
@@ -80,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 };
 
-// Hook para acessar o contexto de autenticação
+// Hook para consumir o contexto, lança erro se usado fora do provider
 export const useAuth = (): AuthContextProps => {
     const context = useContext(AuthContext);
     if (!context) {

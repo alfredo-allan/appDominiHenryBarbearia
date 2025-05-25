@@ -38,8 +38,8 @@ export const styles = StyleSheet.create({
     color: "gray",
     top: 10,
   },
-  horarios: {
-    marginTop: 50,
+  schedules: {
+    marginTop: 90,
     paddingHorizontal: 20,
     textAlign: "left",
   },
@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
   },
   contactLink: {
     fontSize: 16,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontWeight: "bold",
     textDecorationLine: "none",
     margin: -160,
@@ -73,10 +73,11 @@ export const styles = StyleSheet.create({
   horas: {
     fontWeight: "bold",
   },
-  container_horarios: {
+  container_schedules: {
     padding: 20,
   },
   strong: {
+    top: 10,
     fontWeight: "bold", // Estilo para o equivalente ao <strong>
     fontSize: 16,
   },
@@ -85,23 +86,24 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "gray", // Personalize conforme necessário
   },
-  infocontato: {
+  infocontact: {
     marginBottom: 20,
     top: 10,
     left: "10%",
   },
   gps: {
-    left: "110%",
-    top: "-25%",
+    width: 25,
+    left: "135%",
+    top: "-30%",
   },
-  divisoria: {
+  divider: {
     position: "absolute",
-    height: 82, // Altura da barra
-    backgroundColor: theme.colors.darkGray, // Cor da barra
+    height: 90, // Altura da barra
+    backgroundColor: theme.colors.darkBlack, // Cor da barra
     width: 1, // Largura da barra
     marginVertical: 0, // Espaçamento acima e abaixo da barra
-    left: "105%",
-    top: "-15%",
+    left: "125%",
+    top: "-8%",
   },
   bar_1: {
     position: "absolute",
@@ -118,4 +120,9 @@ export const styles = StyleSheet.create({
     width: 300, // Largura da barra
     marginVertical: 0, // Espaçamento acima e abaixo da barra
   },
+  contentSchedules: {
+    position: "relative",
+    top: -15,
+  },
 });
+

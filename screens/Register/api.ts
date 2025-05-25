@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Configuração base da API com o axios
 export const api = axios.create({
-  baseURL: "http:///192.168.0.107:5000", // IP da máquina Flask
+  baseURL: "https://kinkbarbearia.pythonanywhere.com", // IP da máquina Flask
   timeout: 5000, // Tempo máximo de resposta
 });
 

@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: theme.colors.darkGray,
+    backgroundColor: theme.colors.darkBlack,
     justifyContent: "flex-start", // Ajusta o alinhamento para evitar sobreposição
     alignItems: "center", // Centraliza o conteúdo horizontalmente
   },

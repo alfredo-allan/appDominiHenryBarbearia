@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Configuração base do Axios
 const api = axios.create({
-  baseURL: "http://192.168.0.107:5000", // Substitua pelo IP correto
+  baseURL: "https://kinkbarbearia.pythonanywhere.com", // Substitua pelo IP correto
   headers: {
     "Content-Type": "application/json",
   },

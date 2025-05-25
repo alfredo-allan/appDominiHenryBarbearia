@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   serviceTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     marginBottom: 20,
     marginLeft: -20,
     top: 8,
@@ -20,14 +20,18 @@ export const styles = StyleSheet.create({
     marginBottom: 30,
     marginLeft: -20,
   },
+  containerDosServicos: {
+    position: "relative",
+    marginBottom: 50,
+  },
   serviceName: {
     fontSize: 17,
     fontWeight: 600,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
   },
   servicePrice: {
     fontSize: 15,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontWeight: 600,
     marginLeft: 170,
     display: "flex",
@@ -63,10 +67,10 @@ export const styles = StyleSheet.create({
     padding: 20,
     display: "flex",
     // borderWidth: 1, // Define a largura da borda
-    borderColor: theme.colors.darkGray, // Define a cor da borda
+    borderColor: theme.colors.darkBlack, // Define a cor da borda
   },
   buttonText: {
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontSize: 15,
     fontWeight: "bold",
   },

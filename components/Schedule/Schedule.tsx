@@ -28,15 +28,41 @@ const Schedule: React.FC = () => {
 
             console.log("Resposta do backend:", response); // Verifique o formato aqui
 
-            const validBookings = response.map((booking: any) => ({
-                id: booking.id,
-                service: booking.service,
-                barber: booking.barber,
-                date: booking.date,
-                time: booking.time,
-                duration: booking.duration,
-                valueservice: booking.value, // Ajuste o campo de acordo com o JSON retornado
-            }));
+            const validBookings = response.map((booking: any) => {
+                let barberName = booking.barber;
+                let formattedDate = '';
+                let formattedTime = '';
+
+                // Formatação do nome do barbeiro
+                if (booking.barber === 'Erik') {
+                    barberName = `Barbeiro ${booking.barber}`;
+                }
+                // Se você ainda tiver os 'barber_1', 'barber_2' e quiser manter a tradução:
+                else if (booking.barber === 'barber_1') {
+                    barberName = 'Barbeiro Erik'; // Já incluindo o "Barbeiro" aqui
+                }
+                // Adicione outras traduções de barbeiro aqui se necessário
+
+                // Formatação da data e hora para o padrão brasileiro
+                const dateTimeParts = booking.date.split(' '); // Separa a data da hora, se vierem juntas
+                const datePart = dateTimeParts[0]; // Pega a parte da data (YYYY-MM-DD)
+                const timePart = dateTimeParts.length > 1 ? dateTimeParts[1] : booking.time; // Pega a hora, se disponível na mesma string ou em booking.time
+
+                const [year, month, day] = datePart.split('-');
+                formattedDate = `${day}/${month}/${year}`;
+
+                formattedTime = timePart; // Assumindo que booking.time já vem no formato HH:MM
+
+                return {
+                    id: booking.id,
+                    service: booking.service,
+                    barber: barberName,
+                    date: formattedDate,
+                    time: formattedTime,
+                    duration: booking.duration,
+                    valueservice: booking.valueservice,
+                };
+            });
 
             console.log("Agendamentos processados:", validBookings); // Verifique aqui também
             setBookings(validBookings);

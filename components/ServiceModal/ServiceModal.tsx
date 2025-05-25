@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Modal,
     View,
     Text,
     TouchableOpacity,
-    StyleSheet,
     Image,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
@@ -12,7 +11,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import { styles } from "./styles";
-import { getAvailability, scheduleAppointment, getLoggedInUser } from "./api";
+import {
+    getAvailability,
+    scheduleAppointment,
+    getLoggedInUser,
+    getBarbers, // Nova função que você precisará criar na api.ts
+} from "./api";
 import AvailableTimesModal from "../AvailableTimesModal/AvailableTimesModal";
 
 dayjs.locale("pt-br");
@@ -27,6 +31,12 @@ interface ServiceModalProps {
     } | null;
 }
 
+const friendlyNames: Record<string, string> = {
+    barber_1: "Erik",
+    barber_2: "Wallace",
+    barber_3: "Mateus",
+};
+
 const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }) => {
     const [selectedBarber, setSelectedBarber] = useState("");
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -34,6 +44,19 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [availableTimes, setAvailableTimes] = useState<string[]>([]);
     const [showTimeModal, setShowTimeModal] = useState(false);
+    const [barbers, setBarbers] = useState<{ code: string; name: string }[]>([]);
+
+    useEffect(() => {
+        const loadBarbers = async () => {
+            try {
+                const barbersFromApi = await getBarbers();
+                setBarbers(barbersFromApi);
+            } catch (error) {
+                console.error("Erro ao carregar barbeiros:", error);
+            }
+        };
+        loadBarbers();
+    }, []);
 
     const handleCheckAvailability = async () => {
         if (!selectedBarber || !selectedDate) {
@@ -72,7 +95,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
             barber: selectedBarber,
             date: formattedDate,
             time: selectedTime,
-            duration: Number(service?.duration || 40), // 40 como valor padrão
+            duration: service?.duration ? Number(service.duration) : 40,
             service: service?.name || "Serviço padrão",
             value: valueNumeric,
             name: loggedUser.name,
@@ -80,8 +103,9 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
             email: loggedUser.email,
         };
 
+
         try {
-            const response = await scheduleAppointment(payload);
+            await scheduleAppointment(payload);
             alert("Agendamento realizado com sucesso!");
             onClose();
         } catch (error) {
@@ -93,7 +117,10 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
     return (
         <Modal visible={visible} transparent animationType="slide">
             <View style={styles.modalContainer}>
-                <Image source={require("../../assets/images/kinkbarbearia-removebg-preview.png")} style={styles.logo} />
+                <Image
+                    source={require("../../assets/images/splash.png")}
+                    style={styles.logo}
+                />
                 <View style={styles.modalContent}>
                     <Text style={styles.modalTitle}>{service?.name || "Serviço"}</Text>
                     <Text style={styles.modalService}>Preço: {service?.price || "Indisponível"}</Text>
@@ -106,8 +133,13 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
                         style={styles.picker}
                     >
                         <Picker.Item label="Selecione um barbeiro" value="" />
-                        <Picker.Item label="Wallace" value="Wallace" />
-                        <Picker.Item label="Mateus" value="Mateus" />
+                        {barbers.map((barber) => (
+                            <Picker.Item
+                                key={barber.code}
+                                label={friendlyNames[barber.code] || barber.name}
+                                value={barber.code}
+                            />
+                        ))}
                     </Picker>
 
                     <TouchableOpacity style={styles.customButton} onPress={() => setShowDatePicker(true)}>
@@ -137,6 +169,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
                     <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
                         <Text style={styles.buttonText}>Confirmar</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
                         <Text style={styles.buttonText}>Cancelar</Text>
                     </TouchableOpacity>

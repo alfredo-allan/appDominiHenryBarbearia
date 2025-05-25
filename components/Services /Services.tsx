@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles"; // Importando os estilos
-import ServiceModal from "../../components/ServiceModal/ServiceModal"; // Importar o modal
+import ServiceModal from "../ServiceModal/ServiceModal"; // Importar o modal
 
-const Servicos = () => {
+const Services = () => {
   const [selectedService, setSelectedService] = useState<{
     name: string;
     price: string;
@@ -13,13 +13,14 @@ const Servicos = () => {
 
   const services = [
     { name: "Corte Simples", price: "R$ 30,00", duration: "45m" },
-    { name: "Barba Simples", price: "R$ 30,00", duration: "45m" },
-    { name: "Pézinho", price: "R$ 15,00", duration: "30m" },
+    { name: "Barba Simples", price: "R$ 20,00", duration: "20m" },
+    { name: "Pézinho", price: "R$ 10,00", duration: "10m" },
     { name: "Corte + Barba", price: "R$ 50,00", duration: "1h" },
     { name: "Corte + Sobrancelha", price: "R$ 35,00", duration: "25m" },
-    { name: "Máscara Simples", price: "R$ 15,00", duration: "30m" },
-    { name: "Hidratação", price: "R$ 15,00", duration: "35m" },
-    { name: "Luzes", price: "R$ 90,00", duration: "1,5h" },
+    { name: "Corte + produto", price: "R$ 60,00", duration: "1h" },
+    { name: "Corte + Luzes", price: "R$ 90,00", duration: "1,5h" },
+    { name: "Máscara Simples", price: "R$ 10,00", duration: "15m" },
+    { name: "Hidratação", price: "R$ 10,00", duration: "10m" },
   ];
 
   const handleOpenModal = (service: { name: string; price: string; duration: string }) => {
@@ -39,19 +40,21 @@ const Servicos = () => {
     >
       <Text style={styles.serviceTitle}>Serviços</Text>
 
-      {services.map((service, index) => (
-        <View key={index} style={styles.serviceItem}>
-          <Text style={styles.serviceName}>{service.name}</Text>
-          <Text style={styles.servicePrice}>{service.price}</Text>
-          <Text style={styles.serviceDuration}>{service.duration}</Text>
-          <TouchableOpacity
-            style={styles.customButton}
-            onPress={() => handleOpenModal(service)}
-          >
-            <Text style={styles.buttonText}>Agendar</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+      <View style={styles.containerDosServicos}>
+        {services.map((service, index) => (
+          <View key={index} style={styles.serviceItem}>
+            <Text style={styles.serviceName}>{service.name}</Text>
+            <Text style={styles.servicePrice}>{service.price}</Text>
+            <Text style={styles.serviceDuration}>{service.duration}</Text>
+            <TouchableOpacity
+              style={styles.customButton}
+              onPress={() => handleOpenModal(service)}
+            >
+              <Text style={styles.buttonText}>Agendar</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
 
       <ServiceModal
         visible={modalVisible}
@@ -62,4 +65,4 @@ const Servicos = () => {
   );
 };
 
-export default Servicos;
+export default Services;

@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     height: "50%",
   },
   modalTitle: {
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 10,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
     fontWeight: "bold",
   },
   picker: {
@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
     borderColor: "#ddd",
     paddingHorizontal: 20,
     marginBottom: 10,
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
   },
   customButton: {
     width: "70%",
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
-    borderColor: theme.colors.darkGray, // Define a cor da borda
+    borderColor: theme.colors.darkBlack, // Define a cor da borda
   },
   cancelButton: {
     display: "flex",
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
   confirmButton: {
     display: "flex",
     width: "30%",
-    backgroundColor: theme.colors.darkGray,
+    backgroundColor: theme.colors.darkBlack,
     padding: 10,
     borderRadius: 5,
     right: "20%",
@@ -79,6 +79,8 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+    marginRight: "auto",
+    marginLeft: "auto",
   },
   logo: {
     width: 65,
@@ -90,4 +92,5 @@ export const styles = StyleSheet.create({
   modalService: {
     display: "none",
   },
+
 });

@@ -20,4 +20,8 @@ export const styles = StyleSheet.create({
     height: 390,
     borderRadius: 8,
   },
+  portfolioContainer: {
+    position: "relative",
+    marginBottom: 70,
+  },
 });

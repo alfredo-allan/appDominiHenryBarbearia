@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
   nota: {
     fontSize: 25,
     fontWeight: "bold",
-    color: theme.colors.darkGray,
+    color: theme.colors.darkBlack,
   },
   estrelasContainer: {
     flexDirection: "row",
@@ -87,5 +87,77 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     color: "#333",
+  },
+  avaliarBox: {
+    backgroundColor: "#f0f0f0",
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+
+  avaliarTexto: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+
+  ratingTexto: {
+    fontSize: 14,
+    color: "#666",
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modalContainer: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    width: "80%",
+    alignItems: "center",
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+
+  inputComentario: {
+    width: "100%",
+    height: 80,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+    textAlignVertical: "top",
+  },
+
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    width: "100%",
+  },
+
+  cancelar: {
+    color: "#888",
+    fontSize: 16,
+  },
+
+  enviar: {
+    color: "#007bff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  comentarioWrapper: {
+    marginBottom: 10,
+    bottom: 30,
   },
 });
