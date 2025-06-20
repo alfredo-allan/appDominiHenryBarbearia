@@ -15,6 +15,7 @@ import { Eye, EyeOff } from "lucide-react-native";
 import { styles } from "./styles";
 import { useAuth } from "../../src/Context/AuthContext";
 import { loginUser } from "./api";
+import ResponseModal from "../../components/ResponseModal/ResponseModal"; // ajuste caminho
 
 type LoginProps = {
   setAuthStep: React.Dispatch<React.SetStateAction<"login" | "home" | "register">>;
@@ -26,32 +27,42 @@ const Login: React.FC<LoginProps> = ({ setAuthStep }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
+
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  // Modal states
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const showModal = (message: string) => {
+    setModalMessage(message);
+    setModalVisible(true);
+  };
 
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage("Por favor, preencha todos os campos.");
+      showModal("Por favor, preencha todos os campos.");
       return;
     }
 
     setLoading(true);
-    setErrorMessage(null);
 
     try {
       const result = await loginUser(email, password);
 
       if (result.success) {
         await login(result.user);
-        setAuthStep("home"); // troca para menu direto
+        setAuthStep("home");
       } else {
-        setErrorMessage(result.message || "Erro ao realizar login.");
+        showModal(result.message || "Erro ao realizar login.");
       }
     } catch (error) {
       console.error("Erro no login:", error);
-      setErrorMessage("Erro inesperado ao tentar logar.");
+      showModal("Erro inesperado ao tentar logar.");
     } finally {
       setLoading(false);
     }
@@ -68,10 +79,13 @@ const Login: React.FC<LoginProps> = ({ setAuthStep }) => {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
-            <Image
-              source={require("../../assets/images/icon.png")}
-              style={styles.logo}
-            />
+            {!isInputFocused && (
+              <Image
+                source={require("../../assets/images/icon.png")}
+                style={styles.logo}
+              />
+            )}
+
             <Text style={styles.title}>Login</Text>
 
             <TextInput
@@ -82,6 +96,10 @@ const Login: React.FC<LoginProps> = ({ setAuthStep }) => {
               value={email}
               onChangeText={setEmail}
               placeholderTextColor="#999"
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => {
+                if (!password) setIsInputFocused(false);
+              }}
             />
 
             <View style={styles.passwordContainer}>
@@ -92,6 +110,10 @@ const Login: React.FC<LoginProps> = ({ setAuthStep }) => {
                 value={password}
                 onChangeText={setPassword}
                 placeholderTextColor="#999"
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => {
+                  if (!email) setIsInputFocused(false);
+                }}
               />
               <TouchableOpacity onPress={toggleShowPassword}>
                 {showPassword ? (
@@ -101,12 +123,6 @@ const Login: React.FC<LoginProps> = ({ setAuthStep }) => {
                 )}
               </TouchableOpacity>
             </View>
-
-            {errorMessage && (
-              <Text style={{ color: "red", marginBottom: 10, textAlign: "center" }}>
-                {errorMessage}
-              </Text>
-            )}
 
             <TouchableOpacity
               style={[styles.customButtonLogin, loading ? { opacity: 0.7 } : null]}
@@ -124,6 +140,13 @@ const Login: React.FC<LoginProps> = ({ setAuthStep }) => {
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>
+
+      {/* Modal de resposta */}
+      <ResponseModal
+        visible={modalVisible}
+        message={modalMessage}
+        onClose={() => setModalVisible(false)}
+      />
     </KeyboardAvoidingView>
   );
 };

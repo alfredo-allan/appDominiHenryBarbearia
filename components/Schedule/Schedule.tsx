@@ -1,121 +1,102 @@
-import React, { useEffect, useState, } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableOpacity,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getCustomerBookings, deleteCustomerBooking } from "./api"; // Corrigido: Uso de funções corretas do api.ts
+import { getCustomerBookings, deleteCustomerBooking } from "./api";
 import { styles } from "./styles";
+import ResponseModal from "../ResponseModal/ResponseModal"; // ajuste o caminho se necessário
 
 interface Booking {
     id: number;
-    service: string; // Nome do serviço
-    barber: string; // Nome do barbeiro
-    date: string; // Data do agendamento
-    time: string; // Hora do agendamento
-    duration: number; // Duração do serviço
-    valueservice: number; // Valor do serviço
+    service: string;
+    barber: string;
+    date: string;
+    time: string;
+    duration: number;
+    valueservice: number;
 }
-
 
 const Schedule: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
 
-    // Função para carregar os agendamentos do usuário logado
+    const showModal = (message: string) => {
+        setModalMessage(message);
+        setModalVisible(true);
+    };
+
     const loadBookings = async () => {
         try {
             setLoading(true);
-
             const response = await getCustomerBookings();
-
-            console.log("Resposta do backend:", response); // Verifique o formato aqui
 
             const validBookings = response.map((booking: any) => {
                 let barberName = booking.barber;
-                let formattedDate = '';
-                let formattedTime = '';
 
-                // Formatação do nome do barbeiro
-                if (booking.barber === 'Erik') {
+                if (booking.barber === "Erik") {
                     barberName = `Barbeiro ${booking.barber}`;
+                } else if (booking.barber === "barber_1") {
+                    barberName = "Barbeiro Erik";
                 }
-                // Se você ainda tiver os 'barber_1', 'barber_2' e quiser manter a tradução:
-                else if (booking.barber === 'barber_1') {
-                    barberName = 'Barbeiro Erik'; // Já incluindo o "Barbeiro" aqui
+
+                if (booking.barber === "Alleson") {
+                    barberName = `Barbeiro ${booking.barber}`;
+                } else if (booking.barber === "barber_2") {
+                    barberName = "Barbeiro Alesson";
                 }
-                // Adicione outras traduções de barbeiro aqui se necessário
 
-                // Formatação da data e hora para o padrão brasileiro
-                const dateTimeParts = booking.date.split(' '); // Separa a data da hora, se vierem juntas
-                const datePart = dateTimeParts[0]; // Pega a parte da data (YYYY-MM-DD)
-                const timePart = dateTimeParts.length > 1 ? dateTimeParts[1] : booking.time; // Pega a hora, se disponível na mesma string ou em booking.time
-
-                const [year, month, day] = datePart.split('-');
-                formattedDate = `${day}/${month}/${year}`;
-
-                formattedTime = timePart; // Assumindo que booking.time já vem no formato HH:MM
+                const dateTimeParts = booking.date.split(" ");
+                const datePart = dateTimeParts[0];
+                const timePart = dateTimeParts.length > 1 ? dateTimeParts[1] : booking.time;
+                const [year, month, day] = datePart.split("-");
 
                 return {
                     id: booking.id,
                     service: booking.service,
                     barber: barberName,
-                    date: formattedDate,
-                    time: formattedTime,
+                    date: `${day}/${month}/${year}`,
+                    time: timePart,
                     duration: booking.duration,
                     valueservice: booking.valueservice,
                 };
             });
 
-            console.log("Agendamentos processados:", validBookings); // Verifique aqui também
             setBookings(validBookings);
         } catch (error) {
-            console.error("Erro ao carregar os agendamentos:", error);
-            Alert.alert("Erro", "Não foi possível carregar os agendamentos.");
+            console.error("Erro ao carregar agendamentos:", error);
+            showModal("Não foi possível carregar os agendamentos.");
         } finally {
             setLoading(false);
         }
     };
 
-
-    // Função para excluir um agendamento
     const handleDelete = async (bookingId: number) => {
         if (!bookingId) {
-            Alert.alert("Erro", "ID do agendamento inválido.");
+            showModal("ID do agendamento inválido.");
             return;
         }
 
         try {
-            const confirmed = await new Promise((resolve) =>
-                Alert.alert(
-                    "Confirmar exclusão",
-                    "Você deseja mesmo excluir este agendamento?",
-                    [
-                        { text: "Cancelar", onPress: () => resolve(false), style: "cancel" },
-                        { text: "Excluir", onPress: () => resolve(true), style: "destructive" },
-                    ]
-                )
-            );
-
-            if (!confirmed) return;
-
-            // Exclui o agendamento usando a função do api.ts
             await deleteCustomerBooking(bookingId);
-            setBookings((prevBookings) => prevBookings.filter((b) => b.id !== bookingId));
-            Alert.alert("Sucesso", "Agendamento excluído com sucesso.");
+            setBookings((prev) => prev.filter((b) => b.id !== bookingId));
+            showModal("Agendamento excluído com sucesso.");
         } catch (error) {
             console.error("Erro ao excluir agendamento:", error);
-            Alert.alert("Erro", "Não foi possível excluir o agendamento.");
+            showModal("Não foi possível excluir o agendamento.");
         }
     };
-
 
     useEffect(() => {
         loadBookings();
     }, []);
 
-    useEffect(() => {
-        console.log("Agendamentos carregados:", bookings);
-    }, [bookings]);
-
-    // Renderiza cada agendamento na lista
     const renderBooking = ({ item }: { item: Booking }) => (
         <TouchableOpacity
             style={styles.bookingItem}
@@ -140,12 +121,10 @@ const Schedule: React.FC = () => {
         </TouchableOpacity>
     );
 
-
-
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Meus Agendamentos</Text>
+
             {loading ? (
                 <Text style={styles.loading}>Carregando...</Text>
             ) : bookings.length > 0 ? (
@@ -155,13 +134,17 @@ const Schedule: React.FC = () => {
                     renderItem={renderBooking}
                     contentContainerStyle={styles.list}
                 />
-
             ) : (
                 <Text style={styles.noData}>Nenhum agendamento encontrado.</Text>
             )}
+
+            <ResponseModal
+                visible={modalVisible}
+                message={modalMessage}
+                onClose={() => setModalVisible(false)}
+            />
         </View>
     );
-
 };
 
 export default Schedule;

@@ -69,23 +69,25 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   eyeIcon: {
+    // color: theme.colors.gray
   },
 
   passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 12,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 5,
     marginBottom: 16,
+    height: 45,
   },
 
   inputPassword: {
     flex: 1,
     paddingVertical: 12,
     fontSize: 16,
-    color: "#333",
+    color: theme.colors.gray,
   },
 
 });

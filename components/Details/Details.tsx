@@ -5,40 +5,30 @@ import {
   Image,
   TouchableOpacity,
   Linking,
-  StyleSheet,
   ScrollView,
 } from "react-native";
 import { styles } from "./styles";
-import MapView, { Marker } from "react-native-maps";
 
 const Details: React.FC = () => {
+  const latitude = -23.615073775382466;
+  const longitude = -46.592578725496786;
+
   const navigateToLocation = () => {
-    const location = "Rua Flores de São Pedro, 27 - Vila Heliopolis, São Paulo";
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      location
-    )}`;
+    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     Linking.openURL(url);
   };
 
   return (
     <ScrollView showsHorizontalScrollIndicator={false}>
       <View style={styles.container}>
-        {/* Mapa */}
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: -23.615073775382466, // Latitude do local
-            longitude: -46.592578725496786, // Longitude do local
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
-        >
-          <Marker
-            coordinate={{ latitude: -23.61966, longitude: -46.58048 }}
-            title="Barbearia Domini Henry"
-            description="Rua Flores de São Pedro, 27 - Vila Heliopolis"
+        {/* Imagem ilustrativa do mapa com clique para abrir o Google Maps */}
+        <TouchableOpacity onPress={navigateToLocation} activeOpacity={0.8}>
+          <Image
+            source={require("../../assets/images/mapview.png")} // coloque sua imagem aqui
+            style={styles.map}
+            resizeMode="cover"
           />
-        </MapView>
+        </TouchableOpacity>
 
         {/* Botão de navegação */}
         <TouchableOpacity
@@ -58,9 +48,10 @@ const Details: React.FC = () => {
             <Image
               source={require("../../assets/images/gps.png")}
               style={styles.gps}
-            ></Image>
+            />
           </View>
         </TouchableOpacity>
+
         <View style={styles.infocontact}>
           <Text style={styles.strong}>Contato e Horario De Funcionamento</Text>
         </View>
@@ -68,29 +59,22 @@ const Details: React.FC = () => {
         {/* Contato e Horário */}
         <View style={styles.schedules}>
           <Text style={styles.contentSchedules}>
-            {" "}
             <Text style={styles.strong}>{"\n"}Segunda a Sabado </Text>
             <Text style={styles.span}>10:00 - 20:00{"\n"}</Text>
             <Text style={styles.strong}>Domingo </Text>
             <Text style={styles.span}>Fechado{"\n\n"}</Text>
-            {/* <Text style={styles.strong}>Wallace </Text>
-            <Text style={styles.span}>Terça-Feira Folga{"\n"}</Text> */}
-            {/* <Text style={styles.strong}>Mateus </Text>
-            <Text style={styles.span}>Quarta-Feira Folga{"\n"}</Text> */}
           </Text>
           <TouchableOpacity
             onPress={() => Linking.openURL("https://wa.me/5511920531626")}
           >
-            <View style={styles.bar_1}></View>
-
-            <Text style={styles.contactLink}>(11) 93368-5251</Text>
+            <View style={styles.bar_1} />
+            <Text style={styles.contactLink}>(11) 92053-1626</Text>
             <Image
               source={require("../../assets/images/whatsapp.png")}
               style={styles.whatsappIcon}
             />
-            <View style={styles.bar_2}></View>
+            <View style={styles.bar_2} />
           </TouchableOpacity>
-          {/* Horários de Funcionamento */}
         </View>
       </View>
     </ScrollView>

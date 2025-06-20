@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0000008C"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true
@@ -18,17 +18,21 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#0000008C"
+        "backgroundColor": "#000000"
       },
       "permissions": [
         "INTERNET"
-      ]
+      ],
+      "package": "com.kali_sonic_1992.BarbeariaDominiHenry"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-font"
-    ]
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": "b93a41db-947e-4d5e-94aa-a80aa44c1403"
+      }
+    }
   }
 }

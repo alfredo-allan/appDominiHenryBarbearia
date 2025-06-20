@@ -5,19 +5,23 @@ import {
     Text,
     TouchableOpacity,
     Image,
+    FlatList,
+    KeyboardAvoidingView,
+    Platform,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
+import DropDownPicker from "react-native-dropdown-picker";
 import { styles } from "./styles";
 import {
     getAvailability,
     scheduleAppointment,
     getLoggedInUser,
-    getBarbers, // Nova função que você precisará criar na api.ts
+    getBarbers,
 } from "./api";
 import AvailableTimesModal from "../AvailableTimesModal/AvailableTimesModal";
+import ResponseModal from "../ResponseModal/ResponseModal"; // certifique-se que o caminho está correto
 
 dayjs.locale("pt-br");
 
@@ -33,24 +37,42 @@ interface ServiceModalProps {
 
 const friendlyNames: Record<string, string> = {
     barber_1: "Erik",
-    barber_2: "Wallace",
-    barber_3: "Mateus",
+    barber_2: "Alesson",
+    // barber_3: "Mateus",
 };
 
 const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }) => {
     const [selectedBarber, setSelectedBarber] = useState("");
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedTime, setSelectedTime] = useState<string>("");
+    const [selectedTime, setSelectedTime] = useState("");
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [availableTimes, setAvailableTimes] = useState<string[]>([]);
     const [showTimeModal, setShowTimeModal] = useState(false);
     const [barbers, setBarbers] = useState<{ code: string; name: string }[]>([]);
+    const [openDropdown, setOpenDropdown] = useState(false);
+    const [dropdownItems, setDropdownItems] = useState<{ label: string; value: string }[]>([]);
+
+    const [responseVisible, setResponseVisible] = useState(false);
+    const [responseMessage, setResponseMessage] = useState("");
+    const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+
+    const showMessage = (msg: string, success: boolean | null = null) => {
+        setResponseMessage(msg);
+        setIsSuccess(success);
+        setResponseVisible(true);
+    };
+
 
     useEffect(() => {
         const loadBarbers = async () => {
             try {
                 const barbersFromApi = await getBarbers();
                 setBarbers(barbersFromApi);
+                const items = barbersFromApi.map((barber) => ({
+                    label: friendlyNames[barber.code] || barber.name,
+                    value: barber.code,
+                }));
+                setDropdownItems(items);
             } catch (error) {
                 console.error("Erro ao carregar barbeiros:", error);
             }
@@ -60,7 +82,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
 
     const handleCheckAvailability = async () => {
         if (!selectedBarber || !selectedDate) {
-            alert("Por favor, selecione um barbeiro e uma data.");
+            showMessage("Por favor, selecione um barbeiro e uma data.");
             return;
         }
 
@@ -70,19 +92,19 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
             setAvailableTimes(times);
             setShowTimeModal(true);
         } catch (error) {
-            alert("Erro ao buscar disponibilidade. Tente novamente.");
+            showMessage("Erro ao buscar disponibilidade. Tente novamente.");
         }
     };
 
     const handleConfirm = async () => {
         if (!selectedBarber || !selectedDate || !selectedTime) {
-            alert("Por favor, selecione um barbeiro, uma data e um horário.");
+            showMessage("Por favor, selecione um barbeiro, uma data e um horário.");
             return;
         }
 
         const loggedUser = await getLoggedInUser();
         if (!loggedUser) {
-            alert("Erro ao recuperar as informações do usuário logado.");
+            showMessage("Erro ao recuperar as informações do usuário logado.");
             return;
         }
 
@@ -103,78 +125,86 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
             email: loggedUser.email,
         };
 
-
         try {
             await scheduleAppointment(payload);
-            alert("Agendamento realizado com sucesso!");
-            onClose();
+            showMessage("Agendamento realizado com sucesso!", true);
         } catch (error) {
             console.error("Erro ao realizar agendamento:", error);
-            alert("Erro ao realizar agendamento. Tente novamente.");
+            showMessage("Erro ao realizar agendamento. Tente novamente.", false);
         }
+
     };
 
     return (
-        <Modal visible={visible} transparent animationType="slide">
-            <View style={styles.modalContainer}>
-                <Image
-                    source={require("../../assets/images/splash.png")}
-                    style={styles.logo}
-                />
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>{service?.name || "Serviço"}</Text>
-                    <Text style={styles.modalService}>Preço: {service?.price || "Indisponível"}</Text>
-                    <Text style={styles.modalService}>Duração: {service?.duration || "Indisponível"}</Text>
-
-                    <Text style={styles.modalText}>Escolha o Barbeiro:</Text>
-                    <Picker
-                        selectedValue={selectedBarber}
-                        onValueChange={(itemValue) => setSelectedBarber(itemValue)}
-                        style={styles.picker}
-                    >
-                        <Picker.Item label="Selecione um barbeiro" value="" />
-                        {barbers.map((barber) => (
-                            <Picker.Item
-                                key={barber.code}
-                                label={friendlyNames[barber.code] || barber.name}
-                                value={barber.code}
+        <Modal visible={visible} animationType="slide">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                style={styles.modalContainer}
+            >
+                <FlatList
+                    data={["placeholder"]}
+                    keyExtractor={(_, index) => index.toString()}
+                    renderItem={() => null}
+                    ListHeaderComponent={
+                        <View style={styles.modalContent}>
+                            <Image
+                                source={require("../../assets/images/splash-icon.png")}
+                                style={styles.logo}
                             />
-                        ))}
-                    </Picker>
+                            <Text style={styles.modalTitle}>{service?.name || "Serviço"}</Text>
+                            <Text style={styles.modalService}>Preço: {service?.price || "Indisponível"}</Text>
+                            <Text style={styles.modalService}>Duração: {service?.duration || "Indisponível"}</Text>
 
-                    <TouchableOpacity style={styles.customButton} onPress={() => setShowDatePicker(true)}>
-                        <Text style={styles.buttonText}>
-                            {selectedDate
-                                ? dayjs(selectedDate).format("DD/MM/YYYY")
-                                : "Selecione a data"}
-                        </Text>
-                    </TouchableOpacity>
+                            <Text style={styles.modalText}>Escolha o Barbeiro:</Text>
+                            <DropDownPicker
+                                open={openDropdown}
+                                value={selectedBarber}
+                                items={dropdownItems}
+                                setOpen={setOpenDropdown}
+                                setValue={setSelectedBarber}
+                                setItems={setDropdownItems}
+                                placeholder="Selecione um barbeiro"
+                                style={{ marginBottom: openDropdown ? 120 : 20 }}
+                                containerStyle={{ zIndex: 1000 }}
+                            />
 
-                    {showDatePicker && (
-                        <DateTimePicker
-                            value={selectedDate || new Date()}
-                            mode="date"
-                            display="calendar"
-                            onChange={(event, date) => {
-                                setShowDatePicker(false);
-                                if (date) setSelectedDate(date);
-                            }}
-                        />
-                    )}
+                            <TouchableOpacity style={styles.customButton} onPress={() => setShowDatePicker(true)}>
+                                <Text style={styles.buttonText}>
+                                    {selectedDate
+                                        ? dayjs(selectedDate).format("DD/MM/YYYY")
+                                        : "Selecione a data"}
+                                </Text>
+                            </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.customButton} onPress={handleCheckAvailability}>
-                        <Text style={styles.buttonText}>Ver Disponibilidade</Text>
-                    </TouchableOpacity>
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={selectedDate || new Date()}
+                                    mode="date"
+                                    display="calendar"
+                                    onChange={(event, date) => {
+                                        setShowDatePicker(false);
+                                        if (date) setSelectedDate(date);
+                                    }}
+                                />
+                            )}
 
-                    <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-                        <Text style={styles.buttonText}>Confirmar</Text>
-                    </TouchableOpacity>
+                            <TouchableOpacity style={styles.customButton} onPress={handleCheckAvailability}>
+                                <Text style={styles.buttonText}>
+                                    {selectedTime ? `Horário: ${selectedTime}` : "Ver Disponibilidade"}
+                                </Text>
+                            </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                        <Text style={styles.buttonText}>Cancelar</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+                                <Text style={styles.buttonText}>Confirmar</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                                <Text style={styles.buttonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
+                />
+            </KeyboardAvoidingView>
 
             <AvailableTimesModal
                 visible={showTimeModal}
@@ -182,6 +212,19 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service }
                 availableTimes={availableTimes}
                 onSelectTime={(time) => setSelectedTime(time)}
             />
+
+            <ResponseModal
+                visible={responseVisible}
+                message={responseMessage}
+                isSuccess={isSuccess}
+                onClose={() => {
+                    setResponseVisible(false);
+                    if (isSuccess) {
+                        onClose();
+                    }
+                }}
+            />
+
         </Modal>
     );
 };

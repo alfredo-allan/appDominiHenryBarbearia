@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     marginBottom: 290,
   },
   menu: {
-    backgroundColor: "#232323",
+    backgroundColor: theme.colors.darkBlack,
     paddingVertical: 10,
     position: "absolute", // Garante que o menu fique fixo
     top: 0,

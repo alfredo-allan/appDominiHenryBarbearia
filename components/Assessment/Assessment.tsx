@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
 } from "react-native";
 import estrelaNota from "../../assets/images/estrelanota.png";
 import estrelaVazia from "../../assets/images/estrela-vazia.png";
 import { styles } from "./styles";
 import { useAssessmentAPI } from "./api";
 import { useAuth } from "../../src/Context/AuthContext";
+import ResponseModal from "../ResponseModal/ResponseModal"; // ajuste o caminho conforme necessário
 
 interface Comentario {
   id: number;
@@ -34,6 +34,9 @@ const Assessment: React.FC = () => {
   const [notaModal, setNotaModal] = useState(5);
   const [comentarioModal, setComentarioModal] = useState("");
 
+  const [responseModalVisible, setResponseModalVisible] = useState(false);
+  const [responseModalMessage, setResponseModalMessage] = useState("");
+
   const mediaNota = 5.0;
   const estrelas = [1, 2, 3, 4, 5];
   const avaliacoesPorEstrela: { [key: number]: number } = {
@@ -53,13 +56,15 @@ const Assessment: React.FC = () => {
       const data = await getComentarios();
       setComentarios(data);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os comentários.");
+      setResponseModalMessage("Não foi possível carregar os comentários.");
+      setResponseModalVisible(true);
     }
   };
 
   const abrirModal = () => {
     if (!isAuthenticated) {
-      Alert.alert("Atenção", "Você precisa estar logado para avaliar.");
+      setResponseModalMessage("Você precisa estar logado para avaliar.");
+      setResponseModalVisible(true);
       return;
     }
     setModalVisible(true);
@@ -67,7 +72,8 @@ const Assessment: React.FC = () => {
 
   const enviarComentario = async () => {
     if (!comentarioModal.trim()) {
-      Alert.alert("Erro", "Comentário não pode estar vazio.");
+      setResponseModalMessage("Comentário não pode estar vazio.");
+      setResponseModalVisible(true);
       return;
     }
 
@@ -77,13 +83,16 @@ const Assessment: React.FC = () => {
         rating: notaModal,
       });
 
-      Alert.alert("Sucesso", "Comentário enviado com sucesso.");
+      setResponseModalMessage("Comentário enviado com sucesso.");
+      setResponseModalVisible(true);
+
       setComentarioModal("");
       setNotaModal(5);
       setModalVisible(false);
       carregarComentarios();
     } catch (error: any) {
-      Alert.alert("Erro", error.message || "Erro ao enviar o comentário.");
+      setResponseModalMessage(error.message || "Erro ao enviar o comentário.");
+      setResponseModalVisible(true);
     }
   };
 
@@ -196,6 +205,12 @@ const Assessment: React.FC = () => {
           </View>
         </View>
       </Modal>
+
+      <ResponseModal
+        visible={responseModalVisible}
+        message={responseModalMessage}
+        onClose={() => setResponseModalVisible(false)}
+      />
     </>
   );
 };

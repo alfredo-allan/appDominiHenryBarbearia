@@ -4,38 +4,46 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  Alert,
   Share,
 } from "react-native";
 import { useAuth } from "../../src/Context/AuthContext";
 import { styles } from "./styles";
 import { reportShare, reportLike } from "./api";
+import ResponseModal from "../ResponseModal/ResponseModal"; // ajuste o caminho se necessário
 
 const InfoBarber = () => {
   const { user, isAuthenticated } = useAuth();
   const [liked, setLiked] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const showModal = (message: string) => {
+    setModalMessage(message);
+    setModalVisible(true);
+  };
+
   const handleShare = async () => {
     if (!isAuthenticated || !user?.id) {
-      Alert.alert("Atenção", "Você precisa estar logado para compartilhar.");
+      showModal("Você precisa estar logado para compartilhar.");
       return;
     }
 
     try {
       await reportShare(user.id); // usando a API
       await Share.share({
-        message: "Confira o app do nosso salão: https://meusalãoexpo.app",
+        message: "Confira o App Do Nosso Salão: https://barbearia-domini-henry-landing-page.vercel.app/home",
       });
 
-      Alert.alert("Sucesso", "Compartilhamento registrado.");
+      showModal("Compartilhamento registrado com sucesso.");
     } catch (error) {
-      Alert.alert("Erro", "Falha ao compartilhar.");
+      showModal("Falha ao compartilhar.");
     }
   };
 
   const handleLike = async () => {
     if (!isAuthenticated || !user?.id) {
-      Alert.alert("Atenção", "Você precisa estar logado para curtir.");
+      showModal("Você precisa estar logado para curtir.");
       return;
     }
 
@@ -43,39 +51,47 @@ const InfoBarber = () => {
       await reportLike(user.id); // usando a API
       setLiked(true);
     } catch (error) {
-      Alert.alert("Erro", "Erro ao registrar like.");
+      showModal("Erro ao registrar like.");
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Domini Henry</Text>
+    <>
+      <View style={styles.container}>
+        <Text style={styles.title}>Domini Henry</Text>
 
-      <View style={styles.socialContainer}>
-        <TouchableOpacity onPress={handleShare}>
-          <Image
-            source={require("../../assets/images/compartilhar.png")}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+        <View style={styles.socialContainer}>
+          <TouchableOpacity onPress={handleShare}>
+            <Image
+              source={require("../../assets/images/compartilhar.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleLike}>
-          <Image
-            source={
-              liked
-                ? require("../../assets/images/coracao-vermelho.png")
-                : require("../../assets/images/coracao.png")
-            }
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleLike}>
+            <Image
+              source={
+                liked
+                  ? require("../../assets/images/coracao-vermelho.png")
+                  : require("../../assets/images/coracao.png")
+              }
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.address}>
+          Rua Flores de São Pedro, 27 - Vila Heliopolis,{"\n"}
+          São Paulo.
+        </Text>
       </View>
 
-      <Text style={styles.address}>
-        Rua Flores de São Pedro, 27 - Vila Heliopolis,{"\n"}
-        São Paulo.
-      </Text>
-    </View>
+      <ResponseModal
+        visible={modalVisible}
+        message={modalMessage}
+        onClose={() => setModalVisible(false)}
+      />
+    </>
   );
 };
 
